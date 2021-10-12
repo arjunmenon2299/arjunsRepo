@@ -1,9 +1,11 @@
 import java.util.*;
 
 public class SecurityDB extends SecurityDBBase {
-    private SecurityDBHashtable test;
     private int numPlanes;
     private int numPassengersPerPlane;
+    private Hashtable<Integer, Passenger> hehe;
+    Map<Integer, Passenger> myMap;
+
 
     /**
      * Creates an empty hashtable and a variable to count non-empty elements.
@@ -18,10 +20,9 @@ public class SecurityDB extends SecurityDBBase {
 
         int initialSize = numPassengersPerPlane*numPlanes+1;
         int finalSize = checkNumber(initialSize);
-        this.test = new SecurityDBHashtable(finalSize);
-        UnsortedTab
-        //System.out.println("hiii");
+        this.myMap = new Map<>(finalSize);
 
+        //System.out.println("hiii");
     }
 
     /* Implement all the necessary methods here */
@@ -71,7 +72,25 @@ public class SecurityDB extends SecurityDBBase {
 
     @Override
     public int calculateHashCode(String key) {
-        return test.hashFunction(key);
+        int sum = 0;
+        int hash = 0;
+        int ascii = 0;
+        int[] hashArray = new int[key.length()];
+
+        for (int i = 0; i < key.length(); i++) {
+            ascii = (int) key.charAt(i);
+            hashArray[i] = ascii;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            sum += hashArray[i];
+            hashArray[i] = sum + 1;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            hash += hashArray[i];
+        }
+        return hash;
     }
 
     /**
@@ -80,7 +99,7 @@ public class SecurityDB extends SecurityDBBase {
      */    
     @Override
     public int size() {
-        return test.hashTableSize;
+        return myMap.size();
     }
 
     /**
@@ -100,7 +119,14 @@ public class SecurityDB extends SecurityDBBase {
 
     @Override
     public boolean addPassenger(String name, String passportId) {
-        return true;
+       int pHash = calculateHashCode(passportId);
+
+       if (hehe.containsKey(pHash)) {
+           return false;
+       } else {
+           hehe.put(pHash, new Passenger(name, passportId));
+       }
+       return true;
     }
 
     @Override
@@ -157,6 +183,357 @@ public class SecurityDB extends SecurityDBBase {
     }
 
 }
+
+class Passenger {
+    private String name;
+    private String passportID;
+    private int passengerHash;
+
+    public Passenger(String name, String passportID) {
+        super();
+        this.name = name;
+        this.passportID = passportID;
+        this.passengerHash = calculateHash(passportID);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.passengerHash;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof Passenger) {
+            return (this.passengerHash) == (((Passenger)o).passengerHash);
+        }
+        return false;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassportID() {
+        return passportID;
+    }
+
+    public void setPassportID(String passportID) {
+        this.passportID = passportID;
+    }
+
+    public int getPassengerHash() {
+        return passengerHash;
+    }
+
+    public void setPassengerHash(String key) {
+        this.passengerHash = calculateHash(key);
+    }
+
+    public int calculateHash(String key) {
+        int sum = 0;
+        int hash = 0;
+        int ascii = 0;
+        int[] hashArray = new int[key.length()];
+
+        for (int i = 0; i < key.length(); i++) {
+            ascii = (int) key.charAt(i);
+            hashArray[i] = ascii;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            sum += hashArray[i];
+            hashArray[i] = sum + 1;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            hash += hashArray[i];
+        }
+        return hash;
+    }
+
+}
+
+/**
+ * Node ADT
+ */
+class Node<K, V> {
+
+    public K key;
+    public V value;
+    public Node<K, V> next;
+    public int hashCode;
+
+    public Node(K key, V value, int hashCode) {
+        this.key =  key;
+        this.value = value;
+        this.hashCode = hashCode;
+    }
+    
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return value;
+    }
+
+    public Node<K, V> getNext() {
+        return next;
+    }
+
+    public long calculateHash(String key) {
+        long sum = 0;
+        long hash = 0;
+        long ascii = 0;
+        long[] hashArray = new long[key.length()];
+
+        for (int i = 0; i < key.length(); i++) {
+            ascii = (int) key.charAt(i);
+            hashArray[i] = ascii;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            sum += hashArray[i];
+            hashArray[i] = sum + 1;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            hash += hashArray[i];
+        }
+        return hash;
+    }
+}
+
+/**
+ * Map ADT
+ */
+class Map<K, V> {
+    public List<Node<K, V>> bucketArray;
+    public int bucketCount;
+    public int size;
+
+    public Map(int size) {
+        this.bucketCount = 20;
+        this.size = size;
+
+        for (int i = 0; i < bucketCount; i++) {
+            bucketArray.add(null);
+        }
+    }  
+    
+    public int size() { return size; }
+
+    public boolean isEmpty() { return size() == 0; }
+
+    private final int MapHashCode (K key) {
+        return calculateHash(key.toString());
+        // return Objects.hashCode(key);
+    }
+
+    private int getBucketIndex(K key){
+        int hashCode = MapHashCode(key);
+        int index = hashCode % bucketCount;
+        // key.hashCode() coule be negative.
+        index = index < 0 ? index * -1 : index;
+        return index;
+    }
+
+     // Method to remove a given key
+     public V remove(K key)
+     {
+         // Apply hash function to find index for given key
+         int bucketIndex = getBucketIndex(key);
+         int hashCode = MapHashCode(key);
+         // Get head of chain
+         Node<K, V> head = bucketArray.get(bucketIndex);
+  
+         // Search for key in its chain
+         Node<K, V> prev = null;
+         while (head != null) {
+             // If Key found
+             if (head.getKey().equals(key) && hashCode == head.hashCode)
+                 break;
+  
+             // Else keep moving in chain
+             prev = head;
+             head = head.next;
+         }
+  
+         // If key was not there
+         if (head == null)
+             return null;
+  
+         // Reduce size
+         size--;
+  
+         // Remove key
+         if (prev != null)
+             prev.next = head.next;
+         else
+             bucketArray.set(bucketIndex, head.next);
+  
+         return head.value;
+     }
+
+    // Returns value for a key
+    public V get(K key) {
+        // Find head of chain for given key
+        int bucketIndex = getBucketIndex(key);
+        int hashCode = MapHashCode(key);
+       
+        Node<K, V> head = bucketArray.get(bucketIndex);
+ 
+        // Search key in chain
+        while (head != null) {
+            if (head.key.equals(key) && head.hashCode == hashCode)
+                return head.value;
+            head = head.next;
+        }
+ 
+        // If key not found
+        return null;
+    }
+
+
+    // Adds a key value pair to hash
+    public void add(K key, V value) {
+        // Find head of chain for given key
+        int bucketIndex = getBucketIndex(key);
+        int hashCode = MapHashCode(key);
+        Node<K, V> head = bucketArray.get(bucketIndex);
+ 
+        // Check if key is already present
+        while (head != null) {
+            if (head.key.equals(key) && head.hashCode == hashCode) {
+                head.value = value;
+                return;
+            }
+            head = head.next;
+        }
+ 
+        // Insert key in chain
+        size++;
+        head = bucketArray.get(bucketIndex);
+        Node<K, V> newNode
+            = new Node<K, V>(key, value, hashCode);
+        newNode.next = head;
+        bucketArray.set(bucketIndex, newNode);
+ 
+        // If load factor goes beyond threshold, then
+        // double hash table size
+        if ((1.0 * size) / bucketCount >= 0.7) {
+            List<Node<K, V> > temp = bucketArray;
+            bucketCount = 2 * bucketCount;
+            size = 0;
+            for (int i = 0; i < bucketCount; i++)
+                bucketArray.add(null);
+ 
+            for (Node<K, V> headNode : temp) {
+                while (headNode != null) {
+                    add(headNode.key, headNode.value);
+                    headNode = headNode.next;
+                }
+            }
+        }
+    }
+
+    public int calculateHash(String key) {
+        int sum = 0;
+        int hash = 0;
+        int ascii = 0;
+        int[] hashArray = new int[key.length()];
+
+        for (int i = 0; i < key.length(); i++) {
+            ascii = (int) key.charAt(i);
+            hashArray[i] = ascii;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            sum += hashArray[i];
+            hashArray[i] = sum + 1;
+        }
+
+        for (int i = 0; i < hashArray.length; i++) {
+            hash += hashArray[i];
+        }
+        return hash;
+    }
+   
+
+}
+
+
+
+// class Node<Integer, Passenger> {
+//     private int key;
+//     private Passenger value;
+//     private Node<Integer, Passenger> next;
+//     private int hashCode;
+
+//     public int getKey() {
+//         return key;
+//     }
+
+//     public void setKey(Integer key) {
+//         this.key = (int)key;
+//     }
+
+//     public Passenger getValue() {
+//         return value;
+//     }
+
+//     public void setValue(Passenger value) {
+//         this.value = value;
+//     }
+
+//     public Node<Integer, Passenger> getNext() {
+//         return next;
+//     }
+
+//     public void setNext(Node<Integer, Passenger> next) {
+//         this.next = next;
+//     }
+
+//     public long getHashCode() {
+//         return hashCode;
+//     }
+
+//     public void setHashCode(String key) {
+//         this.hashCode = calculateHash(key);
+//     }
+
+//     public int calculateHash(String key) {
+//         int sum = 0;
+//         int hash = 0;
+//         int ascii = 0;
+//         int[] hashArray = new int[key.length()];
+
+//         for (int i = 0; i < key.length(); i++) {
+//             ascii = (int) key.charAt(i);
+//             hashArray[i] = ascii;
+//         }
+
+//         for (int i = 0; i < hashArray.length; i++) {
+//             sum += hashArray[i];
+//             hashArray[i] = sum + 1;
+//         }
+
+//         for (int i = 0; i < hashArray.length; i++) {
+//             hash += hashArray[i];
+//         }
+//         return hash;
+//     }
+// }
+
+
+// abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
+
+// }
 
 /* Add any additional helper classes here */
 

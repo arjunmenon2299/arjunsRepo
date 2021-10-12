@@ -5,12 +5,38 @@ public class Airport extends AirportBase {
 
     /* Implement all the necessary methods of the Airport here */
 
+    public Airport(int capacity) {
+        super(capacity);
+        //TODO Auto-generated constructor stub
+    }
+
     static class Terminal extends TerminalBase {
+        public String terminalID;
+        public int terminalWaitTime;
+
+        public Terminal(String id, int waitingTime) {
+            super(id, waitingTime);
+            this.terminalID = id;
+            this.terminalWaitTime = waitingTime;
+            //TODO Auto-generated constructor stub
+        }
 
         /* Implement all the necessary methods of the Terminal here */
+        public TerminalBase opposite(ShuttleBase shuttle, TerminalBase terminal) {
+            if (shuttle.getOrigin() == terminal) {
+                return shuttle.getDestination();
+            } else {
+                return shuttle.getOrigin();
+            }
+        }
     }
 
     static class Shuttle extends ShuttleBase {
+
+        public Shuttle(AirportBase.TerminalBase origin, AirportBase.TerminalBase destination, int time) {
+            super(origin, destination, time);
+            //TODO Auto-generated constructor stub
+        }
 
         /* Implement all the necessary methods of the Shuttle here */
     }
@@ -65,5 +91,54 @@ public class Airport extends AirportBase {
                 .map(TerminalBase::getId)
                 .collect(Collectors.toList()).equals(List.of("A", "B", "D"));
         assert fastestPath.time == 14;
+    }
+
+    @Override
+    public AirportBase.TerminalBase opposite(AirportBase.ShuttleBase shuttle, AirportBase.TerminalBase terminal) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public AirportBase.TerminalBase insertTerminal(AirportBase.TerminalBase terminal) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public AirportBase.ShuttleBase insertShuttle(AirportBase.TerminalBase origin, AirportBase.TerminalBase destination,
+            int time) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean removeTerminal(AirportBase.TerminalBase terminal) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean removeShuttle(AirportBase.ShuttleBase shuttle) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public List<AirportBase.ShuttleBase> outgoingShuttles(AirportBase.TerminalBase terminal) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public AirportBase.Path findShortestPath(AirportBase.TerminalBase origin, AirportBase.TerminalBase destination) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public AirportBase.Path findFastestPath(AirportBase.TerminalBase origin, AirportBase.TerminalBase destination) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
