@@ -3,6 +3,9 @@ import java.util.stream.Collectors;
 
 public class Airport extends AirportBase {
 
+    //public List<Terminal> terminalList;
+
+
     /* Implement all the necessary methods of the Airport here */
 
     public Airport(int capacity) {
@@ -13,6 +16,7 @@ public class Airport extends AirportBase {
     static class Terminal extends TerminalBase {
         public String terminalID;
         public int terminalWaitTime;
+        public List<Terminal> terminalList;
 
         public Terminal(String id, int waitingTime) {
             super(id, waitingTime);
@@ -22,13 +26,14 @@ public class Airport extends AirportBase {
         }
 
         /* Implement all the necessary methods of the Terminal here */
-        public TerminalBase opposite(ShuttleBase shuttle, TerminalBase terminal) {
+        public AirportBase.TerminalBase opposite(AirportBase.ShuttleBase shuttle, AirportBase.TerminalBase terminal) {
             if (shuttle.getOrigin() == terminal) {
                 return shuttle.getDestination();
             } else {
                 return shuttle.getOrigin();
             }
         }
+
     }
 
     static class Shuttle extends ShuttleBase {
@@ -96,13 +101,19 @@ public class Airport extends AirportBase {
     @Override
     public AirportBase.TerminalBase opposite(AirportBase.ShuttleBase shuttle, AirportBase.TerminalBase terminal) {
         // TODO Auto-generated method stub
-        return null;
+        if (shuttle.getOrigin() == terminal) {
+            return shuttle.getDestination();
+        } else {
+            return shuttle.getOrigin();
+        }
     }
 
     @Override
     public AirportBase.TerminalBase insertTerminal(AirportBase.TerminalBase terminal) {
         // TODO Auto-generated method stub
-        return null;
+        if (terminalList.length == 0) {
+            terminalList
+        }
     }
 
     @Override
@@ -142,3 +153,5 @@ public class Airport extends AirportBase {
         return null;
     }
 }
+
+
