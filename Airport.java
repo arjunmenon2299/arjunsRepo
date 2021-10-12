@@ -110,10 +110,7 @@ public class Airport extends AirportBase {
 
     @Override
     public AirportBase.TerminalBase insertTerminal(AirportBase.TerminalBase terminal) {
-        // TODO Auto-generated method stub
-        if (terminalList.length == 0) {
-            terminalList
-        }
+       return null;
     }
 
     @Override
